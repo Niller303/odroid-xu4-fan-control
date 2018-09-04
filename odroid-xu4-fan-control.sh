@@ -19,7 +19,7 @@ fi
 TEMPERATURE_FILE="/sys/devices/virtual/thermal/thermal_zone0/temp"
 FAN_MODE_FILE="/sys/devices/platform/pwm-fan/hwmon/hwmon0/automatic"
 FAN_SPEED_FILE="/sys/devices/platform/pwm-fan/hwmon/hwmon0/pwm1"
-TEST_EVERY=3 #seconds
+TEST_EVERY=1 #seconds
 LOGGER_NAME=odroid-xu4-fan-control
 
 #make sure after quiting script fan goes to auto control
@@ -56,12 +56,14 @@ do
 
   #Making that nice fan curve
   new_fan_speed=0
+  # 65=b+a^55;255=b+a^75
   new_fan_speed=$(python -c "print(int(8.194+1.07621**($current_max_temp/1000)))")
 
   if (($new_fan_speed > 255)); then
      new_fan_speed=255;
-  elif (($new_fan_speed < 65)); then #Note here that around ~60 and under makes it go BEEP
-     new_fan_speed=65;
+  elif (($new_fan_speed < 61)); then #Note here that around ~60 and under makes it go BEEP
+     #note that exactly 60 makes it beep a small amount on fan spinup
+     new_fan_speed=61;
   fi
 
   ${DEBUG} && logger -t $LOGGER_NAME "event: adjust; speed: ${new_fan_speed}"
