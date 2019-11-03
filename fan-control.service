@@ -1,0 +1,8 @@
+[Unit]
+Description=ODROID XU4 Fan Controller
+
+[Service]
+ExecStart=/home/alarm/Projects/odroid-xu4-fan-control/odroid-xu4-fan-control.py
+
+[Install]
+WantedBy=multi-user.target
